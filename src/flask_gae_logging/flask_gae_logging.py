@@ -428,7 +428,10 @@ class FlaskGAEMaxLogLevelPropagateHandler(CloudLoggingHandler):
                 try:
                     request_payload = payload_parser()
                 except Exception as e:
-                    request_payload = f"Parser of request payload for content type {content_type} failed: {e} | {traceback.format_exc()}"
+                    request_payload = (
+                        f"Parser of request payload for content type "
+                        f"{content_type} failed: {e} | {traceback.format_exc()}"
+                    )
 
             if request_payload:
                 logging_payload['request_payload'] = self._truncate_log_on_cap(request_payload, trace_id)

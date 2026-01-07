@@ -5,5 +5,7 @@ __pycache__/
 .venv
 .idea/
 .vscode/
-
+*.lock
+.ruff_cache/
+.python-version
 dev/

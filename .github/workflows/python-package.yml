@@ -1,0 +1,55 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  release:
+    types: [published]
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  quality:
+      name: Lint with Ruff
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v5
+        - name: Install uv
+          uses: astral-sh/setup-uv@v5
+        - name: Run Ruff
+          run: uv run ruff check --output-format=github .
+
+  build:
+      name: Build Package
+      needs: quality
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v5
+        - name: Install uv
+          uses: astral-sh/setup-uv@v5
+        - name: Build
+          run: uv build
+        - name: Store artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: dist-artifacts
+            path: dist/
+
+  publish-to-pypi:
+    name: Publish to PyPI
+    if: github.event_name == 'release' && github.event.action == 'published'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: flask-gae-logging
+          path: dist/
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
