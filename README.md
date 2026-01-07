@@ -30,7 +30,10 @@ The `flask-gae-logging` module addresses these problems by:
     - `application/x-www-form-urlencoded`
     - `multipart/form-data`
     - `text/plain`
-
+- **Optional add-on log filters**: 
+    - `GaeLogSizeLimitFilter` filter to drop log records if they exceed the maximum allowed size by google cloud logging.
+    - `GaeUrlib3FullPoolFilter` filter to drop noisy 'Connection pool is full' warning logs
+    from Google Cloud and App Engine internal libraries.
 
 ## API
 
@@ -57,6 +60,7 @@ FlaskGAEMaxLogLevelPropagateHandler(
 
     - **log_headers** (bool, optional): Whether to log the request headers. Defaults to False.
 
+    - **builtin_payload_parsers**  (List["PayloadParser.Defaults"], optional): A list of  built-in parser functions for logging request payloads. Defaults to None.
     - **custom_payload_parsers**  (Dict[str, Callable], optional): A dictionary mapping content types to custom parser functions for logging request payloads. If provided, these will override default parsers. Defaults to None.
 
     - ***args**: Additional arguments to pass to the superclass constructor. Any argument you would pass to CloudLoggingHandler.
@@ -189,14 +193,14 @@ def post_form():
 ## How it looks in Google Cloud Log Explorer
 
 ### Logger selection
-![alt text](<logger_selection.jpg>)
+![Logger selection in google cloud log explorer](https://github.com/trebbble/flask-gae-logging/blob/main/logger_selection.jpg)
 
 ### Groupped logs with propagated log severity to the parent log
 
-![alt text](<groupped_logs.jpg>)
+![Grouped logs with propagated log severity to parent log](https://github.com/trebbble/flask-gae-logging/blob/main/groupped_logs.jpg)
 
 ### Grouped logs in request with payload
-![alt text](<request_with_payload.jpg>)
+![Grouped logs with payload](https://github.com/trebbble/flask-gae-logging/blob/main/request_with_payload.jpg)
 
 ## Dependencies
 This tool is built upon the following packages:
