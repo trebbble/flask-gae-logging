@@ -28,3 +28,8 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/trebbble/flask-gae-logging"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.10",
+]
