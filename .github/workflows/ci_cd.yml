@@ -16,7 +16,7 @@ jobs:
       steps:
         - uses: actions/checkout@v6
         - name: Install uv
-          uses: astral-sh/setup-uv@v5
+          uses: astral-sh/setup-uv@v7
         - name: Run Ruff
           run: uv run ruff check --output-format=github .
 
@@ -27,7 +27,7 @@ jobs:
       steps:
         - uses: actions/checkout@v6
         - name: Install uv
-          uses: astral-sh/setup-uv@v5
+          uses: astral-sh/setup-uv@v7
         - name: Build
           run: uv build
         - name: Store artifacts
