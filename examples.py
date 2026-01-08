@@ -1,6 +1,7 @@
 import logging
 import os
 import traceback
+
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -18,9 +19,13 @@ def custom_payload_parser_plain_text():
 if os.getenv('GAE_ENV', '').startswith('standard'):
     import google.cloud.logging
     from google.cloud.logging_v2.handlers import setup_logging
-    from flask_gae_logging import (FlaskGAEMaxLogLevelPropagateHandler,
-                                   GaeLogSizeLimitFilter,
-                                   GaeUrlib3FullPoolFilter, PayloadParser)
+
+    from flask_gae_logging import (
+        FlaskGAEMaxLogLevelPropagateHandler,
+        GaeLogSizeLimitFilter,
+        GaeUrlib3FullPoolFilter,
+        PayloadParser,
+    )
 
     client = google.cloud.logging.Client()
     # Optional - override/provide custom request payload parsers for certain content types

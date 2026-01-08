@@ -31,5 +31,17 @@ Homepage = "https://github.com/trebbble/flask-gae-logging"
 
 [dependency-groups]
 dev = [
+    "isort>=5.13.2",
     "ruff>=0.14.10",
 ]
+
+[tool.ruff]
+line-length = 127
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "C90"]
+ignore = []
+
+[tool.ruff.lint.mccabe]
+max-complexity = 20

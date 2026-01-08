@@ -1,15 +1,15 @@
 import logging
-import time
 import os
-from enum import Enum
-from typing import Optional, Dict, Callable, List
-import traceback
 import sys
+import time
+import traceback
 from datetime import datetime
-from flask import Flask, Response, g, request, has_app_context
-from werkzeug.datastructures import FileStorage
-from google.cloud.logging_v2.handlers import CloudLoggingHandler
+from enum import Enum
+from typing import Callable, Dict, List, Optional
 
+from flask import Flask, Response, g, has_app_context, request
+from google.cloud.logging_v2.handlers import CloudLoggingHandler
+from werkzeug.datastructures import FileStorage
 
 GCLOUD_LOG_MAX_BYTE_SIZE = 1024 * 246
 
