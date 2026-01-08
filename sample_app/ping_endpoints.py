@@ -15,6 +15,7 @@ async def request(client: httpx.AsyncClient, method: str, url: str, label: str, 
     except Exception as e:
         print(f"{method:4} {label:20} | Failed: {type(e).__name__}")
 
+
 async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--project", required=True, help="GAE Project ID")
@@ -60,7 +61,14 @@ async def main():
             "Multipart Form", data={"description": "GAE Test"}, files=file_data
         ))
 
+        # 6. Huge JSON
+        tasks.append(request(
+            client, "POST", f"{base_url}/post_payload", 
+            "Too large Payload", json={"test": "abcdefghij" * (256 * 1024 // 10)},
+            headers={"Content-Type": "application/json"}
+        ))
         await asyncio.gather(*tasks)
+
 
 if __name__ == "__main__":
     try:

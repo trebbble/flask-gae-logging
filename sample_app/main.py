@@ -5,14 +5,13 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
+
 def custom_payload_parser_plain_text():
-    """Custom parser for text/plain to demonstrate GAE handler extensibility."""
-    try:
-        incoming_payload = request.data.decode('utf-8', errors='replace')
-        return f"Parsed Plain Text: {incoming_payload}"
-    except Exception:
-        logging.exception("Failed to parse plain text payload")
-        return "Error: Could not decode plain text data."
+    # Custom parser for text/plain to demonstrate GAE handler extensibility.
+    # Needs to return a serializable value to be logged
+    incoming_payload = request.data.decode('utf-8', errors='replace')
+    return f"Parsed Plain Text: {incoming_payload}"
+
 
 # Initialize GAE Logging
 if os.getenv('GAE_ENV', '').startswith('standard'):
@@ -30,18 +29,29 @@ if os.getenv('GAE_ENV', '').startswith('standard'):
     gae_log_handler = FlaskGAEMaxLogLevelPropagateHandler(
         app=app,
         client=client,
+        # Optional - opt in for logging payload and logs; defaults are False
         log_headers=True,
         log_payload=True,
+        # Optional - opt in for all built in payload parsers; applicable only if log_payload is set True
         builtin_payload_parsers=[content_type for content_type in PayloadParser.Defaults],
+        # Optional - override built in payload parsers or provide more; applicable only if log_payload is set True
         custom_payload_parsers={
             "text/plain": custom_payload_parser_plain_text
         }
     )
     setup_logging(handler=gae_log_handler)
+    # Optional - add extra filters for the logger
     gae_log_handler.addFilter(GaeLogSizeLimitFilter())
     gae_log_handler.addFilter(GaeUrlib3FullPoolFilter())
 
 logging.getLogger().setLevel(logging.DEBUG)
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logging.exception("Uncaught exception occurred")
+    return jsonify({"error": str(e)}), 500
+
 
 @app.route('/info', methods=['GET'])
 def info():
@@ -49,12 +59,14 @@ def info():
     logging.info("Step 2: General information log")
     return jsonify({"message": "info"})
 
+
 @app.route('/warning', methods=['GET'])
 def warning():
     logging.debug("Step 1: Check system state")
     logging.info("Step 2: State is normal")
     logging.warning("Step 3: Resource usage approaching threshold")
     return jsonify({"message": "warning"})
+
 
 @app.route('/error', methods=['GET'])
 def error():
@@ -64,6 +76,7 @@ def error():
     logging.error("Step 4: Transaction failed after retries")
     return jsonify({"message": "error"})
 
+
 @app.route('/exception', methods=['GET'])
 def exception():
     logging.debug("Step 1: Preparing logic")
@@ -71,15 +84,16 @@ def exception():
     logging.error("Step 3: Critical failure detected")
     raise ValueError("Simulated ValueError for GAE grouping demonstration")
 
+
 @app.route('/http_exception', methods=['GET'])
 def http_exception():
     logging.debug("Step 1: Looking up resource")
     logging.info("Step 2: Resource ID not found in database")
     return jsonify({"error": "Resource not found"}), 404
 
+
 @app.route('/post_payload', methods=['POST'])
 def post_payload():
-    """Handles multiple content types to mirror how they are parsed."""
     content_type = request.headers.get('Content-Type', '')
     logging.debug(f"Handling POST request with Content-Type: {content_type}")
 
@@ -105,25 +119,22 @@ def post_payload():
         "content_type_received": content_type
     }), 200
 
+
 @app.route("/post_form", methods=["POST"])
 def post_form():
-    try:
-        description = request.form.get("description")
-        file = request.files.get("file")
+    description = request.form.get("description")
+    file = request.files.get("file")
 
-        if not description or not file:
-            logging.warning("Incomplete form submission received")
-            return jsonify({"error": "Missing required fields"}), 400
+    if not description or not file:
+        logging.warning("Incomplete form submission received")
+        return jsonify({"error": "Missing required fields"}), 400
 
-        file_content = file.read()
-        payload = {
-            "description": description,
-            "file_name": file.filename,
-            "content_type": file.content_type,
-            "file_size": len(file_content),
-        }
-        logging.info(f"Form submission processed: {payload}")
-        return jsonify({"mirror_response": payload}), 200
-    except Exception:
-        logging.exception("Fatal error during multipart form processing")
-        return jsonify({"error": "Form processing failed"}), 500
+    file_content = file.read()
+    payload = {
+        "description": description,
+        "file_name": file.filename,
+        "content_type": file.content_type,
+        "file_size": len(file_content),
+    }
+    logging.info(f"Form submission processed: {payload}")
+    return jsonify({"mirror_response": payload}), 200

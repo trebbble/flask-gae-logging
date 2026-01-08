@@ -342,7 +342,7 @@ class FlaskGAEMaxLogLevelPropagateHandler(CloudLoggingHandler):
 
     def _log_level_to_severity(self, log_level: int) -> str:
         """
-        Map Python logging levels (DEBUG, INFO, etc.) to their corresponding Google Cloud Logging severity levels..
+        Map Python logging levels (DEBUG, INFO, etc.) to their corresponding Google Cloud Logging severity levels.
 
         Args:
             log_level (int): The logging level.
