@@ -1,0 +1,8 @@
+service: default
+entrypoint: gunicorn -b :$PORT -w 2 main:app
+runtime: python312
+instance_class: F1
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 1

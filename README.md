@@ -207,3 +207,11 @@ This tool is built upon the following packages:
 
 - `flask`: A lightweight WSGI web application framework. 
 - `google-cloud-logging`: Google Cloud Logging API client library for logging and managing logs in Google Cloud Platform.
+
+
+### Dev
+- `uv sync --all-packages`
+- Use dev folder for minimal Appengine app deployment of flask app that uses the local library src code via symlink.
+    - If symlink is broken for any reason, create it again from inside the `dev` folder: `ln -s ../src/flask_gae_logging/ .`
+    - Deploy the app: `gcloud app deploy  --version=v1 default.yaml --project=<PROJECT_ID> --account <ACCOUNT_EMAIL>`
+    - Ping the sample app to generate logs for various cases in log explorer: `python3.12 ping_endpoints.py --project <PROJECT_ID>`
