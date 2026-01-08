@@ -193,14 +193,14 @@ def post_form():
 ## How it looks in Google Cloud Log Explorer
 
 ### Logger selection
-![Logger selection in google cloud log explorer](https://github.com/trebbble/flask-gae-logging/blob/main/images/logger_selection.jpg)
+![Logger selection in google cloud log explorer](https://github.com/trebbble/flask-gae-logging/blob/main/images/logger_selection.jpg?raw=true)
 
 ### Groupped logs with propagated log severity to the parent log
 
-![Grouped logs with propagated log severity to parent log](https://github.com/trebbble/flask-gae-logging/blob/main/images/groupped_logs.jpg)
+![Grouped logs with propagated log severity to parent log](https://github.com/trebbble/flask-gae-logging/blob/main/images/groupped_logs.jpg?raw=true)
 
 ### Grouped logs in request with payload
-![Grouped logs with payload](https://github.com/trebbble/flask-gae-logging/blob/main/images/request_with_payload.jpg)
+![Grouped logs with payload](https://github.com/trebbble/flask-gae-logging/blob/main/images/request_with_payload.jpg?raw=true)
 
 ## Dependencies
 This tool is built upon the following packages:
