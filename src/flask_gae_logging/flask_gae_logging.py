@@ -164,13 +164,6 @@ class PayloadParser:
         MULTIPART_FORM = "multipart/form-data"
         PLAIN_TEXT = "text/plain"
 
-    _BUILTIN_PARSERS: Dict[str, Callable[[], object]] = {
-            Defaults.JSON.value: lambda: PayloadParser._safe_call(PayloadParser._parse_json),
-            Defaults.FORM_URLENCODED.value: lambda: PayloadParser._safe_call(PayloadParser._parse_form_urlencoded),
-            Defaults.MULTIPART_FORM.value: lambda: PayloadParser._safe_call(PayloadParser._parse_multipart_form),
-            Defaults.PLAIN_TEXT.value: lambda: PayloadParser._safe_call(PayloadParser._parse_plain_text),
-    }
-
     def __init__(
             self,
             builtin_parsers: Optional[List["PayloadParser.Defaults"]] = None,
@@ -178,10 +171,17 @@ class PayloadParser:
     ):
         self.parsers: Dict[str, Callable[[], object]] = {}
 
+        self._builtin_map = {
+            self.Defaults.JSON.value: self._parse_json,
+            self.Defaults.FORM_URLENCODED.value: self._parse_form_urlencoded,
+            self.Defaults.MULTIPART_FORM.value: self._parse_multipart_form,
+            self.Defaults.PLAIN_TEXT.value: self._parse_plain_text,
+        }
+
         if builtin_parsers:
             for default in builtin_parsers:
-                if default.value in self._BUILTIN_PARSERS:
-                    self.parsers[default.value] = self._BUILTIN_PARSERS[default.value]
+                if default.value in self._builtin_map:
+                    self.parsers[default.value] = self._builtin_map[default.value]
 
         if custom_parsers:
             self.parsers.update(custom_parsers)
@@ -219,13 +219,6 @@ class PayloadParser:
         Returns the parser function for the given content type.
         """
         return self.parsers.get(content_type)
-
-    @staticmethod
-    def _safe_call(parser_fn: Callable):
-        try:
-            return parser_fn()
-        except Exception as e:
-            return f"Parser error: {e} | {traceback.format_exc()}"
 
 
 class FlaskGAEMaxLogLevelPropagateHandler(CloudLoggingHandler):
@@ -333,12 +326,11 @@ class FlaskGAEMaxLogLevelPropagateHandler(CloudLoggingHandler):
                 record = result
 
         result = self._flask_filter.filter(record)
+
         if not result:
             return False
-        if isinstance(result, logging.LogRecord):
-            return result
 
-        return record
+        return True
 
     def _log_level_to_severity(self, log_level: int) -> str:
         """

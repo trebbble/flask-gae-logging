@@ -24,8 +24,8 @@ The `flask-gae-logging` module addresses these problems by:
 
 - **Request Maximum Log Level Propagation**: Propagates the maximum log level throughout the request lifecycle, making it easier to search logs based on the severity of an issue.
 - **Optional incoming request logging**: Opt in/out to log headers and payload of incoming requests into the `jsonPayload` field of the parent log.
-- **Optional request headers logging**: Defaults to True. Headers dict lands into field `request_headers` in the `jsonPayload` of parent log.
-- **Request Payload Logging**: Defaults to True. Incoming payload parsed lands into field `request_payload` in the `jsonPayload` of parent log. Parsing is based on content type with capability to override. Currenty embedded parsers for:
+- **Optional request headers logging**: Defaults to False. Headers dict lands into field `request_headers` in the `jsonPayload` of parent log.
+- **Request Payload Logging**: Defaults to False. Incoming payload parsed lands into field `request_payload` in the `jsonPayload` of parent log. Parsing is based on content type with capability to override. Currenty embedded parsers for:
     - `application/json`
     - `application/x-www-form-urlencoded`
     - `multipart/form-data`
